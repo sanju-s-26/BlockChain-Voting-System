@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>National E-Voting Portal | Election Commission of India</title>
+  
+  <!-- Google Fonts & FontAwesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <link rel="stylesheet" type="text/css" href="../css/login.css">
+</head>
+<body>
+
+  <!-- Top Accessibility & Govt Header Strip -->
+  <header class="govt-header">
+    <div class="top-bar">
+      <div class="top-bar-left">
+        <span class="flag-icon"><i class="fa-solid fa-flag"></i></span>
+        <span>GOVERNMENT OF INDIA &bull; BHARAT NIRVACHAN AAYOG</span>
+      </div>
+      <div class="top-bar-right">
+        <button class="acc-btn" onclick="adjustFontSize(-1)">A-</button>
+        <button class="acc-btn" onclick="adjustFontSize(0)">A</button>
+        <button class="acc-btn" onclick="adjustFontSize(1)">A+</button>
+        <span class="divider">|</span>
+        <button class="acc-btn" onclick="toggleContrast()"><i class="fa-solid fa-circle-half-stroke"></i> High Contrast</button>
+        <span class="divider">|</span>
+        <select class="lang-select">
+          <option>English</option>
+          <option>हिंदी (Hindi)</option>
+          <option>ಕನ್ನಡ (Kannada)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Main Branding Header -->
+    <div class="main-branding">
+      <div class="brand-left">
+        <!-- National Emblem SVG Insignia -->
+        <div class="emblem-container">
+          <svg class="national-emblem" viewBox="0 0 100 100" width="55" height="55">
+            <circle cx="50" cy="50" r="46" fill="#0A192F" stroke="#FF9933" stroke-width="3"/>
+            <!-- Ashoka Chakra Spokes Motif -->
+            <circle cx="50" cy="50" r="28" fill="none" stroke="#138808" stroke-width="2.5"/>
+            <circle cx="50" cy="50" r="8" fill="#000080"/>
+            <path d="M50 22 L50 78 M22 50 L78 50 M30 30 L70 70 M30 70 L70 30" stroke="#000080" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>National E-Voting Portal</h1>
+          <h2>भारत निर्वाचन आयोग &bull; Election Commission of India</h2>
+          <p class="subtitle">SmartVote: AI-Powered Decentralized Blockchain E-Voting System with Dual Authentication</p>
+        </div>
+      </div>
+
+      <div class="brand-badges">
+        <div class="badge"><i class="fa-solid fa-shield-halved"></i> 256-bit Encrypted</div>
+        <div class="badge"><i class="fa-solid fa-cubes"></i> Ethereum Blockchain</div>
+        <div class="badge"><i class="fa-solid fa-robot"></i> AI Fraud Monitor Active</div>
+      </div>
+    </div>
+    
+    <div class="tricolor-strip">
+      <div class="strip-saffron"></div>
+      <div class="strip-white"></div>
+      <div class="strip-green"></div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="login-wrapper">
+    <div class="portal-card">
+      <div class="card-header">
+        <div class="tab-container">
+          <button class="tab-btn active" id="voterTabBtn" onclick="switchTab('voter')">
+            <i class="fa-solid fa-user-check"></i> Citizen Login
+          </button>
+          <button class="tab-btn" id="signupTabBtn" onclick="switchTab('signup')">
+            <i class="fa-solid fa-user-plus"></i> New Voter Signup
+          </button>
+          <button class="tab-btn" id="adminTabBtn" onclick="switchTab('admin')">
+            <i class="fa-solid fa-user-gear"></i> Officer Login
+          </button>
+        </div>
+      </div>
+
+      <div class="card-body">
+        
+        <!-- LOGIN FORM -->
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="voter-id">
+              <i class="fa-solid fa-id-card"></i> <span id="idLabel">EPIC Voter ID / Registration Number</span>
+            </label>
+            <div class="input-icon-wrapper">
+              <input type="text" class="form-control" id="voter-id" name="voter-id" placeholder="e.g. VOTER1001" required autocomplete="off">
+              <i class="fa-solid fa-shield-cat input-icon"></i>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">
+              <i class="fa-solid fa-lock"></i> Account Password
+            </label>
+            <div class="input-icon-wrapper">
+              <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required>
+              <i class="fa-solid fa-key input-icon"></i>
+            </div>
+          </div>
+
+          <!-- Captcha Simulator -->
+          <div class="form-group captcha-group">
+            <label><i class="fa-solid fa-robot"></i> Security Verification</label>
+            <div class="captcha-box">
+              <div class="captcha-code" id="captchaCode">7B9X2</div>
+              <button type="button" class="btn-refresh" onclick="generateCaptcha()"><i class="fa-solid fa-rotate-right"></i></button>
+              <input type="text" id="captchaInput" class="form-control" placeholder="Enter code" required>
+            </div>
+          </div>
+
+          <div id="loginError" class="alert alert-danger" style="display: none;"></div>
+
+          <button type="submit" class="btn btn-primary btn-block" id="loginSubmitBtn">
+            <i class="fa-solid fa-right-to-bracket"></i> Proceed to Dual Authentication
+          </button>
+        </form>
+
+        <!-- SIGNUP FORM (Hidden by default) -->
+        <form id="signupForm" style="display: none;">
+          <div class="alert alert-info">
+            <i class="fa-solid fa-file-signature"></i> 
+            <strong>New Citizen Voter Enrollment (ECI Form 6 Aligned):</strong> Register your EPIC Voter ID, fill optional details aligned with Election Commission of India standards, and enroll your facial biometrics.
+          </div>
+
+          <!-- Section 1: Account Credentials -->
+          <div class="form-section">
+            <div class="form-section-title"><i class="fa-solid fa-user-lock"></i> 1. Core Registration Credentials</div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="reg-name"><i class="fa-solid fa-user"></i> Full Citizen Name</label>
+                <input type="text" class="form-control" id="reg-name" placeholder="e.g. Sanju S">
+              </div>
+              <div class="form-group">
+                <label for="reg-age"><i class="fa-solid fa-cake-candles"></i> Citizen Age (Years)</label>
+                <input type="number" class="form-control" id="reg-age" placeholder="e.g. 28" min="18" max="120" value="28">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group" style="flex: 1;">
+                <label for="reg-email"><i class="fa-solid fa-envelope"></i> Email Address (for OTP Verification)</label>
+                <input type="email" class="form-control" id="reg-email" placeholder="e.g. voter@example.com" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="reg-id"><i class="fa-solid fa-id-card"></i> Assigned EPIC Voter ID</label>
+                <div style="display: flex; gap: 8px;">
+                  <input type="text" class="form-control" id="reg-id" readonly style="background: #F1F5F9; font-weight: 700; letter-spacing: 1px; color: #0A192F;">
+                  <button type="button" class="btn btn-secondary" title="Generate New ID" onclick="generateAutoVoterId()"><i class="fa-solid fa-rotate-right"></i></button>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="reg-password"><i class="fa-solid fa-lock"></i> Account Password</label>
+                <input type="password" class="form-control" id="reg-password" placeholder="Create strong password">
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 2: ECI Demographic Info (Optional) -->
+          <div class="form-section">
+            <div class="form-section-title"><i class="fa-solid fa-hospital-user"></i> 2. Demographic Information (Optional)</div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="reg-gender"><i class="fa-solid fa-venus-mars"></i> Gender</label>
+                <select class="form-control" id="reg-gender">
+                  <option value="">Select Gender (Optional)</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Third Gender">Third Gender / Transgender</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="reg-dob"><i class="fa-solid fa-calendar-days"></i> Date of Birth</label>
+                <input type="date" class="form-control" id="reg-dob">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="reg-relative-name"><i class="fa-solid fa-users"></i> Father / Husband / Relative Full Name</label>
+                <input type="text" class="form-control" id="reg-relative-name" placeholder="e.g. Ramesh S">
+              </div>
+              <div class="form-group">
+                <label for="reg-relation-type"><i class="fa-solid fa-people-arrows"></i> Relationship Type</label>
+                <select class="form-control" id="reg-relation-type">
+                  <option value="">Select Relation (Optional)</option>
+                  <option value="Father">Father</option>
+                  <option value="Mother">Mother</option>
+                  <option value="Husband">Husband</option>
+                  <option value="Wife">Wife</option>
+                  <option value="Legal Guardian">Legal Guardian</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="reg-relative-epic"><i class="fa-solid fa-address-card"></i> Relative's EPIC Voter ID</label>
+                <input type="text" class="form-control" id="reg-relative-epic" placeholder="e.g. ABC1234567">
+              </div>
+              <div class="form-group">
+                <label for="reg-birth-place"><i class="fa-solid fa-location-dot"></i> Place of Birth</label>
+                <input type="text" class="form-control" id="reg-birth-place" placeholder="e.g. Bengaluru, Karnataka">
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 3: Identity & Proof Documents (Optional) -->
+          <div class="form-section">
+            <div class="form-section-title"><i class="fa-solid fa-passport"></i> 3. Official Identity & Documents (Optional)</div>
+            
+            <div class="form-group">
+              <label for="reg-aadhaar"><i class="fa-solid fa-fingerprint"></i> Aadhaar Number (12 Digits - ECI Form 6B)</label>
+              <input type="text" class="form-control" id="reg-aadhaar" placeholder="e.g. 1234 5678 9012" maxlength="14">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="reg-doc-type"><i class="fa-solid fa-file-lines"></i> Identity Proof Document</label>
+                <select class="form-control" id="reg-doc-type">
+                  <option value="">Select Document Type (Optional)</option>
+                  <option value="Aadhaar Card">Aadhaar Card</option>
+                  <option value="PAN Card">PAN Card</option>
+                  <option value="Indian Passport">Indian Passport</option>
+                  <option value="Driving License">Driving License</option>
+                  <option value="Birth Certificate">Birth Certificate</option>
+                  <option value="Class 10 Marksheet">Class 10 Certificate</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="reg-doc-num"><i class="fa-solid fa-hashtag"></i> Document / ID Reference No.</label>
+                <input type="text" class="form-control" id="reg-doc-num" placeholder="e.g. ABCDE1234F">
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 4: Contact Information (Optional) -->
+          <div class="form-section">
+            <div class="form-section-title"><i class="fa-solid fa-address-book"></i> 4. Contact Details (Optional)</div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="reg-mobile"><i class="fa-solid fa-phone"></i> Registered Mobile Number (for 2FA OTP)</label>
+                <input type="tel" class="form-control" id="reg-mobile" placeholder="e.g. 9876543210" maxlength="10">
+              </div>
+              <div class="form-group">
+                <label for="reg-email"><i class="fa-solid fa-envelope"></i> Email Address</label>
+                <input type="email" class="form-control" id="reg-email" placeholder="e.g. citizen@gov.in">
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 5: Ordinary Residence Address (Optional) -->
+          <div class="form-section">
+            <div class="form-section-title"><i class="fa-solid fa-house-chimney"></i> 5. Residence & Address Details (Optional)</div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="reg-house-no"><i class="fa-solid fa-door-open"></i> House / Flat / Door Number</label>
+                <input type="text" class="form-control" id="reg-house-no" placeholder="e.g. #42, 3rd Cross">
+              </div>
+              <div class="form-group">
+                <label for="reg-street"><i class="fa-solid fa-road"></i> Street / Locality / Area</label>
+                <input type="text" class="form-control" id="reg-street" placeholder="e.g. Indiranagar 1st Stage">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="reg-village"><i class="fa-solid fa-city"></i> Village / Town / City & Post Office</label>
+                <input type="text" class="form-control" id="reg-village" placeholder="e.g. Bengaluru East PO">
+              </div>
+              <div class="form-group">
+                <label for="reg-pincode"><i class="fa-solid fa-map-pin"></i> Pincode (6 Digits)</label>
+                <input type="text" class="form-control" id="reg-pincode" placeholder="e.g. 560038" maxlength="6">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="reg-state"><i class="fa-solid fa-map-location-dot"></i> State / Union Territory</label>
+                <select class="form-control" id="reg-state">
+                  <option value="">Select State (Optional)</option>
+                  <option value="Karnataka">Karnataka</option>
+                  <option value="Maharashtra">Maharashtra</option>
+                  <option value="Tamil Nadu">Tamil Nadu</option>
+                  <option value="Delhi">Delhi (NCT)</option>
+                  <option value="Telangana">Telangana</option>
+                  <option value="Kerala">Kerala</option>
+                  <option value="Gujarat">Gujarat</option>
+                  <option value="Uttar Pradesh">Uttar Pradesh</option>
+                  <option value="West Bengal">West Bengal</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="reg-district"><i class="fa-solid fa-building-columns"></i> District</label>
+                <input type="text" class="form-control" id="reg-district" placeholder="e.g. Bengaluru Urban">
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 6: Electoral Constituency & Accessibility (Optional) -->
+          <div class="form-section">
+            <div class="form-section-title"><i class="fa-solid fa-check-to-slot"></i> 6. Electoral Constituency & Accessibility (Optional)</div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="reg-assembly-constituency"><i class="fa-solid fa-landmark"></i> Assembly Constituency (AC)</label>
+                <input type="text" class="form-control" id="reg-assembly-constituency" placeholder="e.g. AC 160 - Sarvagnanagar">
+              </div>
+              <div class="form-group">
+                <label for="reg-parliament-constituency"><i class="fa-solid fa-building-flag"></i> Parliamentary Constituency (PC)</label>
+                <input type="text" class="form-control" id="reg-parliament-constituency" placeholder="e.g. Bengaluru Central">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="reg-pwd-status"><i class="fa-solid fa-wheelchair"></i> Person with Disability (PwD) Accessibility Category</label>
+              <select class="form-control" id="reg-pwd-status">
+                <option value="None">None / Not Applicable</option>
+                <option value="Locomotor">Locomotor Disability</option>
+                <option value="Visual">Visual Impairment</option>
+                <option value="Hearing">Hearing &amp; Speech Impairment</option>
+                <option value="Other">Other Category</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Facial Enrollment Widget -->
+          <div class="form-group">
+            <label><i class="fa-solid fa-camera"></i> Enroll Facial Biometric Photo (Optional)</label>
+            <div class="facial-enrollment-box">
+              <video id="signupVideo" autoplay playsinline style="width: 100%; height: 160px; background: #000; border-radius: 8px; object-fit: cover; display: none;"></video>
+              <canvas id="signupCanvas" style="display: none;"></canvas>
+              <div id="signupFacePreview" class="face-preview-area" style="padding: 20px; text-align: center; background: #F1F5F9; border-radius: 8px; border: 2px dashed #CBD5E1;">
+                <i class="fa-solid fa-user-circle" style="font-size: 48px; color: #94A3B8;"></i>
+                <p style="font-size: 12px; color: #64748B; margin-top: 6px;">No face captured yet (Optional)</p>
+              </div>
+              <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button type="button" class="btn btn-secondary" onclick="startSignupWebcam()" style="flex: 1;"><i class="fa-solid fa-video"></i> Start Webcam</button>
+                <button type="button" class="btn btn-success" onclick="snapSignupFace()" style="flex: 1;"><i class="fa-solid fa-camera"></i> Capture Face</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="signupMsg" class="alert" style="display: none;"></div>
+
+          <button type="submit" class="btn btn-primary btn-block">
+            <i class="fa-solid fa-user-check"></i> Complete Voter Registration
+          </button>
+        </form>
+
+      </div>
+
+      <div class="card-footer">
+        <div class="security-note">
+          <i class="fa-solid fa-lock"></i> Verified E-Governance Service &bull; Protected by SmartVote AI Isolation &amp; Random Forest Anomaly Detector
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- DUAL AUTHENTICATION MODAL: STEP 1 - FACIAL SCAN -->
+  <div class="modal-backdrop" id="facialModal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-camera"></i> Dual Auth: Step 1 of 2 - Facial Recognition Biometric Scan</h3>
+        <button class="close-btn" onclick="closeModal('facialModal')">&times;</button>
+      </div>
+      <div class="modal-body text-center">
+        <p class="modal-desc">Align your face inside the scanning target box. The AI Facial Biometric module will verify your live image against your stored facial record in the electoral database (`voters.db`).</p>
+        
+        <div class="camera-simulator">
+          <div class="camera-viewport">
+            <video id="loginVerifyVideo" autoplay playsinline style="position: absolute; width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: none;"></video>
+            <canvas id="loginVerifyCanvas" style="display: none;"></canvas>
+
+            <div class="face-target-box" id="faceTargetBox">
+              <div class="corner tl"></div><div class="corner tr"></div>
+              <div class="corner bl"></div><div class="corner br"></div>
+              <div class="scan-line"></div>
+            </div>
+            <div class="face-avatar" id="faceAvatarIcon">
+              <i class="fa-solid fa-user-astronaut"></i>
+            </div>
+          </div>
+          <div class="scanner-status" id="scannerStatus">
+            <i class="fa-solid fa-spinner fa-spin"></i> Initializing Biometric Camera...
+          </div>
+        </div>
+
+        <div class="match-score-bar" id="matchScoreContainer" style="display: none;">
+          <div class="score-label">Biometric Match Confidence: <strong id="scoreVal">96.4%</strong></div>
+          <div class="progress">
+            <div class="progress-bar" id="progressBar" style="width: 0%;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('facialModal')">Cancel</button>
+        <button type="button" class="btn btn-success" id="startScanBtn" onclick="runFacialScan()">
+          <i class="fa-solid fa-expand"></i> Capture &amp; Match Biometrics
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DUAL AUTHENTICATION MODAL: STEP 2 - OTP VERIFICATION -->
+  <div class="modal-backdrop" id="otpModal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-envelope"></i> Dual Auth: Step 2 of 2 - Email OTP Security Code</h3>
+        <button class="close-btn" onclick="closeModal('otpModal')">&times;</button>
+      </div>
+      <div class="modal-body text-center">
+        <p class="modal-desc" id="otpModalDesc"><i class="fa-solid fa-envelope"></i> A time-sensitive One-Time Password (OTP) has been sent to your registered email address.</p>
+        
+        <div class="otp-display-box" id="demoOtpAlert" style="display: none;">
+          <i class="fa-solid fa-paper-plane"></i> Demo System OTP Code: <span class="otp-code-highlight" id="demoOtpValue">123456</span>
+        </div>
+
+        <div class="form-group otp-input-group">
+          <label for="otpInput">Enter 6-Digit OTP</label>
+          <input type="text" class="form-control otp-control" id="otpInput" maxlength="6" placeholder="&bull; &bull; &bull; &bull; &bull; &bull;" autocomplete="off">
+        </div>
+
+        <div id="otpError" class="alert alert-danger" style="display: none;"></div>
+
+        <div class="otp-timer">
+          OTP Expires in <span id="timerCountdown">04:59</span> minutes
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="resendOtp()">Resend OTP</button>
+        <button type="button" class="btn btn-primary" id="verifyOtpBtn" onclick="verifyOtpCode()">
+          <i class="fa-solid fa-circle-check"></i> Verify &amp; Authenticate
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page Footer -->
+  <footer class="govt-footer">
+    <div class="footer-content">
+      <p>&copy; 2026 Election Commission of India &bull; SmartVote E-Voting Project (RGIT Bengaluru - VTU)</p>
+      <p class="footer-links">
+        <a href="#"><i class="fa-solid fa-shield"></i> Security Standard ISO/IEC 27001</a> | 
+        <a href="#"><i class="fa-solid fa-network-wired"></i> Smart Contract Verification</a> | 
+        <a href="#"><i class="fa-solid fa-brain"></i> ML Anomaly Audit</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+  <script src="../js/login.js" type="module"></script>
+</body>
+</html>

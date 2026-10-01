@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Election Officer Control Portal | Election Commission of India</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <link rel="stylesheet" type="text/css" href="../css/admin.css">
+</head>
+<body>
+
+  <!-- Top Govt Header -->
+  <header class="govt-header">
+    <div class="top-bar">
+      <div class="top-bar-left">
+        <span class="flag-icon"><i class="fa-solid fa-flag"></i></span>
+        <span>GOVERNMENT OF INDIA &bull; ELECTION COMMISSION CONTROL CENTER</span>
+      </div>
+      <div class="top-bar-right">
+        <button class="logout-btn" onclick="logout()"><i class="fa-solid fa-power-off"></i> Officer Logout</button>
+      </div>
+    </div>
+
+    <!-- Main Branding -->
+    <div class="main-branding">
+      <div class="brand-left">
+        <svg class="national-emblem" viewBox="0 0 100 100" width="50" height="50">
+          <circle cx="50" cy="50" r="46" fill="#0A192F" stroke="#FF9933" stroke-width="3"/>
+          <circle cx="50" cy="50" r="28" fill="none" stroke="#138808" stroke-width="2.5"/>
+          <circle cx="50" cy="50" r="8" fill="#000080"/>
+          <path d="M50 22 L50 78 M22 50 L78 50 M30 30 L70 70 M30 70 L70 30" stroke="#000080" stroke-width="1.5"/>
+        </svg>
+        <div class="brand-text">
+          <h1>Election Administration &amp; AI Security Control Portal</h1>
+          <h2>मुख्य निर्वाचन अधिकारी डैशबोर्ड &bull; Chief Electoral Officer Dashboard</h2>
+        </div>
+      </div>
+
+      <div class="brand-badges">
+        <div class="badge"><i class="fa-solid fa-user-lock"></i> Officer Authenticated</div>
+        <div class="badge badge-ai"><i class="fa-solid fa-robot"></i> Random Forest Active</div>
+      </div>
+    </div>
+    
+    <div class="tricolor-strip">
+      <div class="strip-saffron"></div>
+      <div class="strip-white"></div>
+      <div class="strip-green"></div>
+    </div>
+  </header>
+
+  <main class="admin-container">
+    <div class="admin-grid">
+      
+      <!-- Card 1: Add Candidate -->
+      <div class="admin-card">
+        <div class="card-header">
+          <h3><i class="fa-solid fa-user-plus"></i> Candidate Registration</h3>
+        </div>
+        <div class="card-body">
+          <form id="addCandidateForm" onsubmit="event.preventDefault();">
+            <div class="form-group">
+              <label for="name"><i class="fa-solid fa-user"></i> Candidate Full Name</label>
+              <input id="name" type="text" class="form-control" placeholder="e.g. Dr. A. P. Sharma" autocomplete="off" required>
+            </div>
+            <div class="form-group">
+              <label for="party"><i class="fa-solid fa-landmark"></i> Political Party / Emblem</label>
+              <input id="party" type="text" class="form-control" placeholder="e.g. Progressive Democratic Party" required>
+            </div>
+            <button id="addCandidate" type="button" class="btn btn-primary btn-block">
+              <i class="fa-solid fa-plus-circle"></i> Register Candidate On Blockchain
+            </button>
+            <div id="candidateMsg" class="form-msg"></div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Card 2: Define Voting Schedule -->
+      <div class="admin-card">
+        <div class="card-header">
+          <h3><i class="fa-solid fa-calendar-days"></i> Configure Electoral Voting Schedule</h3>
+        </div>
+        <div class="card-body">
+          <form id="addDateForm" onsubmit="event.preventDefault();">
+            <div class="form-group">
+              <label for="startDate"><i class="fa-solid fa-clock"></i> Election Start Date</label>
+              <input id="startDate" type="date" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="endDate"><i class="fa-solid fa-clock"></i> Election End Date</label>
+              <input id="endDate" type="date" class="form-control" required>
+            </div>
+            <button id="addDate" type="button" class="btn btn-success btn-block">
+              <i class="fa-solid fa-lock"></i> Set Dates On Smart Contract
+            </button>
+            <button id="closeElectionBtn" type="button" class="btn btn-danger btn-block" style="margin-top: 10px; background-color: #DC2626; color: #FFFFFF; border: none; padding: 10px 16px; border-radius: 6px; font-weight: 600; cursor: pointer;" onclick="App.closeElectionEarly()">
+              <i class="fa-solid fa-power-off"></i> Close Election Now &amp; Finalize Results
+            </button>
+            <div id="dateMsg" class="form-msg"></div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Card: Election Results & Historical Audit Portal -->
+    <div class="admin-card full-width" style="margin-top: 24px;">
+      <div class="card-header flex-between">
+        <h3><i class="fa-solid fa-square-poll-vertical"></i> Election Results &amp; Winner Declaration Portal</h3>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <select id="electionHistorySelect" class="form-control" style="padding: 6px 12px; font-size: 13px; border-radius: 6px; border: 1px solid #CBD5E1; cursor: pointer;">
+            <option value="current">Current Election Session</option>
+          </select>
+          <span class="badge badge-completed" id="resultsStatusBadge"><i class="fa-solid fa-clock"></i> Checking Status...</span>
+        </div>
+      </div>
+      <div class="card-body">
+        
+        <!-- Winner Announcement Banner -->
+        <div class="results-winner-banner" id="winnerBanner" style="display: none;">
+          <div class="winner-info">
+            <h4><i class="fa-solid fa-crown"></i> Official Election Winner</h4>
+            <h2 id="winnerName">--</h2>
+            <p id="winnerPartyDetails">--</p>
+          </div>
+          <div class="winner-trophy">
+            <i class="fa-solid fa-trophy"></i>
+          </div>
+        </div>
+
+        <!-- Electoral Embargo Notice (Active during polling) -->
+        <div class="alert alert-info" id="embargoBanner" style="display: none; background-color: #EFF6FF; border: 1px solid #BFDBFE; border-left: 5px solid #2563EB; color: #1E40AF; padding: 14px 18px; border-radius: 8px; margin-bottom: 16px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <i class="fa-solid fa-shield-halved" style="font-size: 24px; color: #2563EB;"></i>
+            <div>
+              <strong style="font-size: 15px; display: block; margin-bottom: 2px;">Electoral Embargo Active — Ballots &amp; Tally Sealed</strong>
+              <span style="font-size: 13px; color: #3B82F6;">In compliance with Election Integrity Rules, candidate vote counts and winner declaration remain strictly confidential while voting is in progress. Official results will be unsealed once polling concludes or is closed early by the election officer.</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <h4 style="margin: 0; color: #1E293B; font-size: 16px;"><i class="fa-solid fa-chart-bar"></i> Candidate Tally &amp; Vote Distribution</h4>
+          <div style="display: flex; gap: 10px;">
+            <button id="btnCloseElectionEarly" class="btn btn-danger" onclick="App.closeElectionEarly()" style="font-size: 12px; padding: 6px 12px; background: #DC2626; color: #FFFFFF; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;">
+              <i class="fa-solid fa-flag-checkered"></i> Close Election Early
+            </button>
+            <button class="btn btn-secondary" onclick="App.loadElectionResults()" style="font-size: 12px; padding: 6px 12px;">
+              <i class="fa-solid fa-rotate"></i> Refresh Tally
+            </button>
+            <button class="btn btn-primary" id="btnArchiveElection" onclick="App.archiveCurrentElection()" style="font-size: 12px; padding: 6px 12px; background: #0F172A; color: #FFFFFF; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; display: none;">
+              <i class="fa-solid fa-box-archive"></i> Archive Election Results
+            </button>
+            <button class="btn btn-secondary" onclick="window.print()" style="font-size: 12px; padding: 6px 12px;">
+              <i class="fa-solid fa-print"></i> Print Official Report
+            </button>
+          </div>
+        </div>
+
+        <div id="resultsMsg" class="form-msg" style="margin-bottom: 10px;"></div>
+
+        <div class="table-responsive">
+          <table class="table audit-table">
+            <thead>
+              <tr>
+                <th>Candidate ID</th>
+                <th>Candidate Name</th>
+                <th>Party Affiliation</th>
+                <th>Total Votes Cast</th>
+                <th>Vote Share (%)</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="resultsTableBody">
+              <tr>
+                <td colspan="6" class="text-center text-muted">Loading election results from blockchain...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Card 3: AI Fraud & Anomaly Security Center -->
+    <div class="admin-card full-width">
+      <div class="card-header flex-between">
+        <h3><i class="fa-solid fa-shield-virus"></i> AI/ML Anomaly Detection &amp; Fraud Monitoring Security Center</h3>
+        <span class="badge badge-live"><i class="fa-solid fa-wave-square"></i> Real-time Monitoring</span>
+      </div>
+      <div class="card-body">
+        <div class="ml-stats-bar" id="mlStatsBar">
+          <div class="stat-box">
+            <span class="stat-num" id="statEvaluated">0</span>
+            <span class="stat-lbl">Votes Evaluated</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num text-success" id="statLegit">0</span>
+            <span class="stat-lbl">Legitimate Cleared</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num text-danger" id="statAnomalies">0</span>
+            <span class="stat-lbl">Anomalies Blocked</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num text-info" id="statAccuracy">100%</span>
+            <span class="stat-lbl">Random Forest Classifier Accuracy</span>
+          </div>
+        </div>
+
+        <h4 class="mt-4"><i class="fa-solid fa-list-check"></i> Recent Activity &amp; Flagged Risk Audit Logs</h4>
+        <div class="table-responsive">
+          <table class="table audit-table">
+            <thead>
+              <tr>
+                <th>Audit ID</th>
+                <th>Voter EPIC ID</th>
+                <th>Timestamp</th>
+                <th>AI Classification</th>
+                <th>Random Forest Anomaly Score</th>
+                <th>Flagged Risk Factors</th>
+              </tr>
+            </thead>
+            <tbody id="anomalyLogBody">
+              <tr>
+                <td colspan="6" class="text-center text-muted">No suspicious anomalies detected. System operating normally.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 4: Suspicious Flagged Votes Review Queue -->
+    <div class="admin-card full-width" style="margin-top: 24px;">
+      <div class="card-header flex-between">
+        <h3><i class="fa-solid fa-user-shield"></i> Suspicious Flagged Votes - Officer Review Queue</h3>
+        <span class="badge badge-warning" id="pendingFlagBadge"><i class="fa-solid fa-clock-rotate-left"></i> Loading Queue...</span>
+      </div>
+      <div class="card-body">
+        <p style="color: #64748B; font-size: 14px; margin-bottom: 16px;">
+          Votes flagged by the Random Forest AI Anomaly Detector are placed on hold. Officers must review all captured active parameters, webcam snapshots, and IP details before approving or denying each vote.
+        </p>
+        <div class="table-responsive">
+          <table class="table audit-table">
+            <thead>
+              <tr>
+                <th>Flag ID</th>
+                <th>Voter EPIC ID</th>
+                <th>Target Candidate</th>
+                <th>Timestamp</th>
+                <th>Risk Prob</th>
+                <th>Client IP</th>
+                <th>Status</th>
+                <th>Officer Review</th>
+              </tr>
+            </thead>
+            <tbody id="flaggedVotesTableBody">
+              <tr>
+                <td colspan="8" class="text-center text-muted">No flagged votes currently pending officer review.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal: Active Parameters & Evidence Inspection Modal -->
+  <div id="inspectVoteModal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-shield-virus"></i> Suspicious Vote Active Parameters Inspector</h3>
+        <button class="modal-close" onclick="closeModal('inspectVoteModal')">&times;</button>
+      </div>
+      <div class="modal-body" id="inspectModalBody">
+        <!-- Dynamically rendered via app.js -->
+      </div>
+      <div class="modal-footer flex-between" id="inspectModalFooter">
+        <button class="btn btn-secondary" onclick="closeModal('inspectVoteModal')">Cancel / Close</button>
+        <div>
+          <button id="btnDenyVote" class="btn btn-danger" style="margin-right: 10px; background: #DC2626; color: white; border: none; padding: 10px 18px; border-radius: 6px; font-weight: 600; cursor: pointer;">
+            <i class="fa-solid fa-circle-xmark"></i> Deny &amp; Reject Vote
+          </button>
+          <button id="btnApproveVote" class="btn btn-success" style="background: #16A34A; color: white; border: none; padding: 10px 18px; border-radius: 6px; font-weight: 600; cursor: pointer;">
+            <i class="fa-solid fa-circle-check"></i> Approve Vote
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="govt-footer">
+    <div class="footer-content">
+      <p>&copy; 2026 Election Commission of India &bull; SmartVote E-Voting Project (RGIT Bengaluru - VTU)</p>
+    </div>
+  </footer>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+  <script src="../dist/app.bundle.js" type="module"></script>
+</body>
+</html>

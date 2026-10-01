@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Official E-Ballot Portal | Election Commission of India</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <link rel="stylesheet" type="text/css" href="../css/index.css">
+</head>
+<body>
+
+  <!-- Top Accessibility & Govt Header Strip -->
+  <header class="govt-header">
+    <div class="top-bar">
+      <div class="top-bar-left">
+        <span class="flag-icon"><i class="fa-solid fa-flag"></i></span>
+        <span>GOVERNMENT OF INDIA &bull; ELECTION COMMISSION OF INDIA</span>
+      </div>
+      <div class="top-bar-right">
+        <button class="acc-btn" onclick="adjustFontSize(-1)">A-</button>
+        <button class="acc-btn" onclick="adjustFontSize(0)">A</button>
+        <button class="acc-btn" onclick="adjustFontSize(1)">A+</button>
+        <span class="divider">|</span>
+        <button class="acc-btn" onclick="toggleContrast()"><i class="fa-solid fa-circle-half-stroke"></i> High Contrast</button>
+        <span class="divider">|</span>
+        <button class="logout-btn" onclick="logout()"><i class="fa-solid fa-power-off"></i> Secure Logout</button>
+      </div>
+    </div>
+
+    <!-- Main Branding Header -->
+    <div class="main-branding">
+      <div class="brand-left">
+        <svg class="national-emblem" viewBox="0 0 100 100" width="50" height="50">
+          <circle cx="50" cy="50" r="46" fill="#0A192F" stroke="#FF9933" stroke-width="3"/>
+          <circle cx="50" cy="50" r="28" fill="none" stroke="#138808" stroke-width="2.5"/>
+          <circle cx="50" cy="50" r="8" fill="#000080"/>
+          <path d="M50 22 L50 78 M22 50 L78 50 M30 30 L70 70 M30 70 L70 30" stroke="#000080" stroke-width="1.5"/>
+        </svg>
+        <div class="brand-text">
+          <h1>National E-Voting Portal</h1>
+          <h2>Official Citizen Electoral Ballot &bull; अधिकारिक इलेक्ट्रॉनिक मतदान पत्र</h2>
+        </div>
+      </div>
+
+      <div class="brand-badges">
+        <div class="badge status-verified"><i class="fa-solid fa-user-shield"></i> Dual Auth: Pass</div>
+        <div class="badge status-blockchain"><i class="fa-solid fa-cubes"></i> Node Verified</div>
+      </div>
+    </div>
+    
+    <div class="tricolor-strip">
+      <div class="strip-saffron"></div>
+      <div class="strip-white"></div>
+      <div class="strip-green"></div>
+    </div>
+  </header>
+
+  <main class="voter-container">
+    <!-- Voter Status & Info Banner -->
+    <div class="voter-info-banner">
+      <div class="info-card">
+        <div class="info-icon"><i class="fa-solid fa-id-badge"></i></div>
+        <div class="info-text">
+          <span class="label">Authenticated Voter:</span>
+          <strong id="voterNameDisplay">Citizen Voter</strong>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-icon"><i class="fa-solid fa-wallet"></i></div>
+        <div class="info-text">
+          <span class="label">Blockchain Wallet:</span>
+          <code id="accountAddress">Connecting Metamask...</code>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-icon"><i class="fa-solid fa-calendar-check"></i></div>
+        <div class="info-text">
+          <span class="label">Official Voting Period:</span>
+          <strong id="dates">Loading dates...</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Electoral Ballot Card -->
+    <div class="ballot-card">
+      <div class="ballot-header">
+        <h2><i class="fa-solid fa-check-to-slot"></i> Official Candidates List &amp; Digital Ballot</h2>
+        <p>Select your candidate carefully. Upon confirmation, your vote will be cryptographically signed, evaluated by Random Forest AI Anomaly Detection, and permanently recorded on the Ethereum Blockchain ledger.</p>
+      </div>
+
+      <div class="ballot-body">
+        <table class="candidate-table">
+          <thead>
+            <tr>
+              <th>Select Candidate</th>
+              <th>Candidate Name</th>
+              <th>Political Party Affiliation</th>
+            </tr>
+          </thead>
+          <tbody id="boxCandidate">
+            <!-- Populated dynamically by app.js -->
+          </tbody>
+        </table>
+
+        <div class="vote-action-area">
+          <div id="msg" aria-live="polite" aria-atomic="true"></div>
+          <button id="voteButton" class="btn btn-vote" onclick="App.vote()" disabled aria-label="Cast Vote On Ethereum Blockchain">
+            <i class="fa-solid fa-paper-plane"></i> Cast Vote On Ethereum Blockchain
+          </button>
+          <div class="vote-disclaimer">
+            <i class="fa-solid fa-circle-notch fa-spin" id="voteSpinner" style="display:none;" aria-hidden="true"></i>
+            <span>Each eligible citizen is strictly permitted to vote exactly ONCE per election.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Cryptographic Receipt Verification Button -->
+  <div style="text-align: center; margin: 20px 0;">
+    <button class="btn btn-secondary" onclick="App.openReceiptVerifier()" style="background: #0A192F; color: #fff; border-radius: 6px; padding: 10px 20px; font-weight: 600; cursor: pointer;">
+      <i class="fa-solid fa-receipt"></i> Verify Cryptographic Voting Receipt
+    </button>
+  </div>
+
+  <!-- RECEIPT MODAL AFTER VOTING -->
+  <div class="modal-backdrop" id="receiptModal" style="display: none;" role="dialog" aria-labelledby="receiptModalTitle" aria-modal="true">
+    <div class="modal-content" tabIndex="-1">
+      <div class="modal-header bg-success">
+        <h3 id="receiptModalTitle"><i class="fa-solid fa-circle-check"></i> Vote Cast &bull; Verifiable Cryptographic Receipt</h3>
+        <button class="close-btn" onclick="closeModal('receiptModal')" aria-label="Close receipt modal">&times;</button>
+      </div>
+      <div class="modal-body text-center">
+        <div class="receipt-icon"><i class="fa-solid fa-shield-cat"></i></div>
+        <h4>Your vote has been cryptographically recorded on the Ethereum Blockchain</h4>
+        
+        <!-- Generated QR Code Container -->
+        <div id="qrcodeContainer" style="margin: 15px auto; padding: 10px; background: #fff; width: 140px; height: 140px; border: 1px solid #CBD5E1; border-radius: 8px;" aria-label="QR code for voting receipt cryptographic hash">
+          <canvas id="receiptQrCanvas" width="120" height="120"></canvas>
+        </div>
+
+        <div class="receipt-details">
+          <div class="receipt-row">
+            <span>Official Receipt ID:</span>
+            <strong id="rxReceiptId" style="color: #0A192F;">RCT-8A9F3C12</strong>
+          </div>
+          <div class="receipt-row">
+            <span>Transaction Hash:</span>
+            <code id="rxTxHash">0x7a8f9b...3c2d1e</code>
+          </div>
+          <div class="receipt-row">
+            <span>Blockchain Block ID:</span>
+            <strong id="rxBlock">#14982103</strong>
+          </div>
+          <div class="receipt-row">
+            <span>Cryptographic HMAC Signature:</span>
+            <small id="rxSig" style="font-family: monospace; color: #16A34A; word-break: break-all;"></small>
+          </div>
+          <div class="receipt-row">
+            <span>AI Risk Assessment:</span>
+            <span class="badge bg-success"><i class="fa-solid fa-robot"></i> 0.00% Risk - Cleared Legitimate</span>
+          </div>
+          <div class="receipt-row">
+            <span>Timestamp:</span>
+            <span id="rxTime">2026-08-13 14:00:00 IST</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="gap: 10px; justify-content: center;">
+        <button type="button" class="btn btn-primary" onclick="App.downloadReceiptJSON()" aria-label="Download JSON Receipt">
+          <i class="fa-solid fa-download"></i> Download JSON Receipt
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="closeModal('receiptModal')" aria-label="Close receipt modal">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECEIPT VERIFICATION PORTAL MODAL -->
+  <div class="modal-backdrop" id="verifierModal" style="display: none;" role="dialog" aria-labelledby="verifierModalTitle" aria-modal="true">
+    <div class="modal-content" tabIndex="-1">
+      <div class="modal-header" style="background: #0A192F; color: #fff;">
+        <h3 id="verifierModalTitle"><i class="fa-solid fa-magnifying-glass-chart"></i> Cryptographic Receipt Verifier</h3>
+        <button class="close-btn" onclick="closeModal('verifierModal')" aria-label="Close verifier modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 14px; color: #475569;">Paste your <strong>Receipt ID</strong> or <strong>Cryptographic HMAC Signature</strong> below to verify inclusion on the Ethereum blockchain:</p>
+        <div style="margin: 15px 0;">
+          <input type="text" id="verifyReceiptInput" class="form-control" placeholder="e.g. RCT-8A9F3C12 or 0x9f8e7d..." style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #CBD5E1; font-family: monospace;" />
+        </div>
+        <div id="verifyResult" style="display: none; padding: 12px; border-radius: 6px; margin-top: 10px;"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="App.runReceiptVerification()" style="background: #138808; border: none;">
+          <i class="fa-solid fa-check-double"></i> Verify Signature
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="closeModal('verifierModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="govt-footer">
+    <div class="footer-content">
+      <p>&copy; 2026 Election Commission of India &bull; SmartVote E-Voting Project (RGIT Bengaluru - VTU)</p>
+    </div>
+  </footer>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+  <script src="../dist/app.bundle.js" type="module"></script>
+</body>
+</html>
